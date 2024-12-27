@@ -121,16 +121,16 @@ func (w *wrappedStruct2db) Get(newObjFunc func() interface{}, order []string, li
 		RowObjTransformFunc: rowObjTransformFunc,
 	})
 
-	if err != nil && err.Op == "ValidateFilters" {
+	if err != nil && err.(struct2db.ErrController).Op == "ValidateFilters" {
 		return nil, ormErrorImpl{
-			op: err.Op,
+			op: err.(struct2db.ErrController).Op,
 		}
 	}
 
 	if err != nil {
 		return nil, ormErrorImpl{
-			op:  err.Op,
-			err: err.Err,
+			op:  err.(struct2db.ErrController).Op,
+			err: err.(struct2db.ErrController).Err,
 		}
 	}
 
@@ -157,8 +157,8 @@ func (w *wrappedStruct2db) RegisterStruct(obj interface{}, inheritFromObj interf
 	err := w.orm.AddSQLGenerator(obj, inheritFromObj, overwriteExisting, forceNameForDB, useOnlyRootFromInheritedObj)
 	if err != nil {
 		return ormErrorImpl{
-			op:  err.Op,
-			err: err.Err,
+			op:  err.(struct2db.ErrController).Op,
+			err: err.(struct2db.ErrController).Err,
 		}
 	}
 	return nil

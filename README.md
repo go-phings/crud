@@ -84,7 +84,7 @@ in the database.
 
 ```
 import (
-	crud "github.com/mikolajgs/prototyping/pkg/rest-api"
+	crud "github.com/go-phings/crud"
 )
 ```
 
