@@ -14,8 +14,6 @@ type HandlerOptions struct {
 }
 
 // Values for CRUD operations
-// Same as in the "umbrella" package: http://github.com/mikolajgs/prototyping/pkg/umbrella
-// refactor: work on these guys to be different?
 const OpAll = 0
 const OpRead = 16
 const OpUpdate = 32

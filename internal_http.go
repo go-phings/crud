@@ -73,16 +73,6 @@ func (c Controller) handleHTTPPut(w http.ResponseWriter, r *http.Request, newObj
 		return
 	}
 
-	// refactor: fix this by checking if ModifiedAt and ModifiedBy fields exist
-	// refactor: also, do the login stuff just like in the ui without umbrella here
-	/*opts := stdb.SaveOptions{}
-	userId := r.Context().Value(umbrella.UmbrellaContextValue("UmbrellaUserID"))
-	rk := reflect.ValueOf(userId).Kind()
-	if rk == reflect.Int64 && userId.(int64) != 0 {
-		opts.ModifiedBy = userId.(int64)
-		opts.ModifiedAt = time.Now().Unix()
-	}*/
-
 	err2 := c.orm.Save(objClone)
 	if err2 != nil {
 		c.writeErrText(w, http.StatusInternalServerError, "cannot_save_to_db")
