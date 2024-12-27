@@ -7,11 +7,11 @@ type ErrController struct {
 	Err error
 }
 
-func (e *ErrController) Error() string {
+func (e ErrController) Error() string {
 	return e.Err.Error()
 }
 
-func (e *ErrController) Unwrap() error {
+func (e ErrController) Unwrap() error {
 	return e.Err
 }
 

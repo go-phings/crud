@@ -2,6 +2,7 @@ package crud
 
 import (
 	"database/sql"
+	"errors"
 
 	struct2db "github.com/go-phings/struct-db-postgres"
 )
@@ -11,6 +12,8 @@ type ORMError interface {
 	IsInvalidFilters() bool
 	// Unwraps unwarps the original error
 	Unwrap() error
+	// Error returns error string
+	Error() string
 }
 
 type ORM interface {
@@ -58,15 +61,15 @@ type ormErrorImpl struct {
 	err error
 }
 
-func (o *ormErrorImpl) IsInvalidFilters() bool {
+func (o ormErrorImpl) IsInvalidFilters() bool {
 	return o.op == "ValidateFilters"
 }
 
-func (o *ormErrorImpl) Error() string {
+func (o ormErrorImpl) Error() string {
 	return o.err.Error()
 }
 
-func (o *ormErrorImpl) Unwrap() error {
+func (o ormErrorImpl) Unwrap() error {
 	return o.err
 }
 
@@ -78,19 +81,35 @@ type wrappedStruct2db struct {
 }
 
 func (w *wrappedStruct2db) CreateTables(objs ...interface{}) error {
-	return w.orm.CreateTables(objs...)
+	err := w.orm.CreateTables(objs...)
+	if err != nil {
+		return errors.New("create table failed")
+	}
+	return nil
 }
 
 func (w *wrappedStruct2db) Load(obj interface{}, id string) error {
-	return w.orm.Load(obj, id, struct2db.LoadOptions{})
+	err := w.orm.Load(obj, id, struct2db.LoadOptions{})
+	if err != nil {
+		return errors.New("load failed")
+	}
+	return nil
 }
 
 func (w *wrappedStruct2db) Save(obj interface{}) error {
-	return w.orm.Save(obj, struct2db.SaveOptions{})
+	err := w.orm.Save(obj, struct2db.SaveOptions{})
+	if err != nil {
+		return errors.New("save failed")
+	}
+	return nil
 }
 
 func (w *wrappedStruct2db) Delete(obj interface{}) error {
-	return w.orm.Delete(obj, struct2db.DeleteOptions{})
+	err := w.orm.Delete(obj, struct2db.DeleteOptions{})
+	if err != nil {
+		return errors.New("delete failed")
+	}
+	return nil
 }
 
 func (w *wrappedStruct2db) Get(newObjFunc func() interface{}, order []string, limit int, offset int, filters map[string]interface{}, rowObjTransformFunc func(interface{}) interface{}) ([]interface{}, ORMError) {
@@ -103,13 +122,13 @@ func (w *wrappedStruct2db) Get(newObjFunc func() interface{}, order []string, li
 	})
 
 	if err != nil && err.Op == "ValidateFilters" {
-		return nil, &ormErrorImpl{
+		return nil, ormErrorImpl{
 			op: err.Op,
 		}
 	}
 
 	if err != nil {
-		return nil, &ormErrorImpl{
+		return nil, ormErrorImpl{
 			op:  err.Op,
 			err: err.Err,
 		}
@@ -119,7 +138,11 @@ func (w *wrappedStruct2db) Get(newObjFunc func() interface{}, order []string, li
 }
 
 func (w *wrappedStruct2db) GetFieldNameFromDBCol(obj interface{}, field string) (string, error) {
-	return w.orm.GetFieldNameFromDBCol(obj, field)
+	s, e := w.orm.GetFieldNameFromDBCol(obj, field)
+	if e != nil {
+		return "", errors.New("error getting field name from db col")
+	}
+	return s, nil
 }
 
 func (w *wrappedStruct2db) GetObjIDValue(obj interface{}) int64 {
@@ -133,7 +156,7 @@ func (w *wrappedStruct2db) ResetFields(obj interface{}) {
 func (w *wrappedStruct2db) RegisterStruct(obj interface{}, inheritFromObj interface{}, overwriteExisting bool, forceNameForDB string, useOnlyRootFromInheritedObj bool) ORMError {
 	err := w.orm.AddSQLGenerator(obj, inheritFromObj, overwriteExisting, forceNameForDB, useOnlyRootFromInheritedObj)
 	if err != nil {
-		return &ormErrorImpl{
+		return ormErrorImpl{
 			op:  err.Op,
 			err: err.Err,
 		}

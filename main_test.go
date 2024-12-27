@@ -330,9 +330,6 @@ func makePUTInsertRequest(j string, status int, t *testing.T) []byte {
 		t.Fatalf("PUT method failed on HTTP server with handler from GetHTTPHandler: %s", err.Error())
 	}
 	if resp.StatusCode != status {
-		b, _ := io.ReadAll(resp.Body)
-		log.Printf("url: %s", url)
-		log.Printf("response body: %s", string(b))
 		t.Fatalf("PUT method returned wrong status code, want %d, got %d", status, resp.StatusCode)
 	}
 
@@ -361,10 +358,6 @@ func makePUTUpdateRequest(j string, id int64, customURI string, t *testing.T) []
 		t.Fatalf("PUT method failed on HTTP server with handler from GetHTTPHandler: %s", err.Error())
 	}
 	if resp.StatusCode != http.StatusOK {
-		b, _ := io.ReadAll(resp.Body)
-		log.Printf("url: %s", url)
-		log.Printf("response body: %s", string(b))
-
 		t.Fatalf("PUT method returned wrong status code, want %d, got %d", http.StatusOK, resp.StatusCode)
 	}
 

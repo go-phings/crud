@@ -183,7 +183,7 @@ func (c Controller) handleHTTPGet(w http.ResponseWriter, r *http.Request, newObj
 			}
 			continue
 		}
-		if errF.Op == "GetHelper" {
+		if errF.(ErrController).Op == "GetHelper" {
 			c.writeErrText(w, http.StatusInternalServerError, "get_helper")
 			return
 		} else {
@@ -293,10 +293,10 @@ func (c Controller) jsonID(id int64) []byte {
 	return []byte(fmt.Sprintf("{\"id\":\"%d\"}", id))
 }
 
-func (c Controller) uriFilterToFilter(obj interface{}, filterName string, filterValue string) (string, interface{}, *ErrController) {
+func (c Controller) uriFilterToFilter(obj interface{}, filterName string, filterValue string) (string, interface{}, error) {
 	fieldName, cErr := c.orm.GetFieldNameFromDBCol(obj, filterName)
 	if cErr != nil {
-		return "", nil, &ErrController{
+		return "", nil, ErrController{
 			Op:  "GetDBCol",
 			Err: fmt.Errorf("Error getting field name from filter: %w", cErr),
 		}
@@ -311,7 +311,7 @@ func (c Controller) uriFilterToFilter(obj interface{}, filterName string, filter
 	if valueField.Type().Name() == "int" {
 		filterInt, err := strconv.Atoi(filterValue)
 		if err != nil {
-			return "", nil, &ErrController{
+			return "", nil, ErrController{
 				Op:  "InvalidValue",
 				Err: fmt.Errorf("Error converting string to int: %w", err),
 			}
@@ -321,7 +321,7 @@ func (c Controller) uriFilterToFilter(obj interface{}, filterName string, filter
 	if valueField.Type().Name() == "int64" {
 		filterInt64, err := strconv.ParseInt(filterValue, 10, 64)
 		if err != nil {
-			return "", nil, &ErrController{
+			return "", nil, ErrController{
 				Op:  "InvalidValue",
 				Err: fmt.Errorf("Error converting string to int64: %w", err),
 			}
