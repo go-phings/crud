@@ -34,7 +34,7 @@ type ORM interface {
 	Delete(obj interface{}) error
 	// Get fetches data from the database and returns struct instances. Hence, it requires a constructor for the returned objects. Apart from the self-explanatory fields, filters in a format of (field name, any value)
 	// can be added, and each returned object (based on a database row) can be transformed into anything else.
-	Get(newObjFunc func() interface{}, order []string, limit int, offset int, filters map[string]interface{}, rowObjTransformFunc func(interface{}) interface{}) ([]interface{}, ORMError)
+	Get(newObjFunc func() interface{}, order []string, limit int, offset int, filters map[string]interface{}, rowObjTransformFunc func(interface{}) interface{}) ([]interface{}, error)
 	// GetFieldNameFromDBCol returns field name that is associated to a specified table column
 	GetFieldNameFromDBCol(obj interface{}, field string) (string, error)
 	// GetObjIDValue returns value of ID field for a specified struct instance
@@ -112,7 +112,7 @@ func (w *wrappedStruct2db) Delete(obj interface{}) error {
 	return nil
 }
 
-func (w *wrappedStruct2db) Get(newObjFunc func() interface{}, order []string, limit int, offset int, filters map[string]interface{}, rowObjTransformFunc func(interface{}) interface{}) ([]interface{}, ORMError) {
+func (w *wrappedStruct2db) Get(newObjFunc func() interface{}, order []string, limit int, offset int, filters map[string]interface{}, rowObjTransformFunc func(interface{}) interface{}) ([]interface{}, error) {
 	xobj, err := w.orm.Get(newObjFunc, struct2db.GetOptions{
 		Order:               order,
 		Limit:               limit,
