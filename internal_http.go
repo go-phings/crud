@@ -2,6 +2,7 @@ package crud
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -196,7 +197,8 @@ func (c Controller) handleHTTPGet(w http.ResponseWriter, r *http.Request, newObj
 		return obj
 	})
 	if err1 != nil {
-		if err1.IsInvalidFilters() {
+		var ormErr ORMError
+		if errors.As(err1, &ormErr) && ormErr.IsInvalidFilters() {
 			c.writeErrText(w, http.StatusBadRequest, "invalid_filter_value")
 			return
 		} else {
