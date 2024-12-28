@@ -17,7 +17,7 @@ func (c *Controller) initHelpers(newObjFunc func() interface{}, options HandlerO
 	if cErr != nil {
 		return ErrController{
 			Op:  "RegisterStruct",
-			Err: fmt.Errorf("Error adding SQL generator: %w", cErr.Unwrap()),
+			Err: fmt.Errorf("Error adding SQL generator: %s", cErr.Error()),
 		}
 	}
 
@@ -26,7 +26,7 @@ func (c *Controller) initHelpers(newObjFunc func() interface{}, options HandlerO
 		if cErr != nil {
 			return ErrController{
 				Op:  "RegisterStruct",
-				Err: fmt.Errorf("Error adding SQL generator: %w", cErr.Unwrap()),
+				Err: fmt.Errorf("Error adding SQL generator: %s", cErr.Error()),
 			}
 		}
 	}
@@ -36,7 +36,7 @@ func (c *Controller) initHelpers(newObjFunc func() interface{}, options HandlerO
 		if cErr != nil {
 			return ErrController{
 				Op:  "RegisterStruct",
-				Err: fmt.Errorf("Error adding SQL generator: %w", cErr.Unwrap()),
+				Err: fmt.Errorf("Error adding SQL generator: %s", cErr.Error()),
 			}
 		}
 	}
@@ -46,7 +46,7 @@ func (c *Controller) initHelpers(newObjFunc func() interface{}, options HandlerO
 		if cErr != nil {
 			return ErrController{
 				Op:  "RegisterStruct",
-				Err: fmt.Errorf("Error adding SQL generator: %w", cErr.Unwrap()),
+				Err: fmt.Errorf("Error adding SQL generator: %s", cErr.Error()),
 			}
 		}
 	}
@@ -56,7 +56,7 @@ func (c *Controller) initHelpers(newObjFunc func() interface{}, options HandlerO
 		if cErr != nil {
 			return ErrController{
 				Op:  "RegisterStruct",
-				Err: fmt.Errorf("Error adding SQL generator: %w", cErr.Unwrap()),
+				Err: fmt.Errorf("Error adding SQL generator: %s", cErr.Error()),
 			}
 		}
 	}

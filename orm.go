@@ -23,7 +23,7 @@ type ORM interface {
 	// Parameter `forceNameForDB` allows forcing another struct name (which later is used for generating table name).
 	// This interface is based on the struct2db module and that module allows some cascade operations (such as delete or update). For this to work, and when certain fields are other structs, ORM must go
 	// deeper and initializes that guys as well. When setting useOnlyRootFromInheritedObj to true, it's being avoided.
-	RegisterStruct(obj interface{}, inheritFromObj interface{}, overwriteExisting bool, forceNameForDB string, useOnlyRootFromInheritedObj bool) ORMError
+	RegisterStruct(obj interface{}, inheritFromObj interface{}, overwriteExisting bool, forceNameForDB string, useOnlyRootFromInheritedObj bool) error
 	// CreateTables create database tables for struct instances
 	CreateTables(objs ...interface{}) error
 	// Load populates struct instance's field values with database values
@@ -153,7 +153,7 @@ func (w *wrappedStruct2db) ResetFields(obj interface{}) {
 	w.orm.ResetFields(obj)
 }
 
-func (w *wrappedStruct2db) RegisterStruct(obj interface{}, inheritFromObj interface{}, overwriteExisting bool, forceNameForDB string, useOnlyRootFromInheritedObj bool) ORMError {
+func (w *wrappedStruct2db) RegisterStruct(obj interface{}, inheritFromObj interface{}, overwriteExisting bool, forceNameForDB string, useOnlyRootFromInheritedObj bool) error {
 	err := w.orm.AddSQLGenerator(obj, inheritFromObj, overwriteExisting, forceNameForDB, useOnlyRootFromInheritedObj)
 	if err != nil {
 		return ormErrorImpl{
