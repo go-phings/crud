@@ -97,7 +97,7 @@ defer conn.Close()
 c := crud.NewController(conn, "app1_", nil)
 user := &User{}
 
-err = c.CreateTable(user) // Run 'CREATE TABLE'
+// Database tables have to be created. This could be done using some ORM like struct-db-postgres or it can be done manually.
 ```
 
 #### ControllerConfig
@@ -119,43 +119,43 @@ meant to change when permorming update, `User_UpdatePassword` is an additional s
 password, and finally - fields in `User_List` will be visible when listing users or reading one user. (You can 
 define these as you like).
 ```
-type User_Create {
+type User_Create struct {
 	ID       int    `json:"user_id"`
 	Name     string `json:"name" crud:"req lenmin:2 lenmax:50"`
 	Email    string `json:"email" crud:"req"`
 	Password string `json:"password"`
 }
-type User_Update {
+type User_Update struct {
 	ID       int    `json:"user_id"`
 	Name     string `json:"name" crud:"req lenmin:2 lenmax:50"`
 	Email    string `json:"email" crud:"req"`
 }
-type User_UpdatePassword {
+type User_UpdatePassword struct {
 	ID       int `json:"user_id"`
 	Password string `json:"password"`
 }
-type User_List {
+type User_List struct {
 	ID       int    `json:"user_id"`
-	Name     string `json:"name"
+	Name     string `json:"name"`
 }
 ```
 
 ```
-var parentFunc = func() interface{} { return &User; }
-var createFunc = func() interface{} { return &User_Create; }
-var readFunc   = func() interface{} { return &User_List; }
-var updateFunc = func() interface{} { return &User_Update; }
-var listFunc   = func() interface{} { return &User_List; }
+var parentFunc = func() interface{} { return &User{}; }
+var createFunc = func() interface{} { return &User_Create{}; }
+var readFunc   = func() interface{} { return &User_List{}; }
+var updateFunc = func() interface{} { return &User_Update{}; }
+var listFunc   = func() interface{} { return &User_List{}; }
 
-var updatePasswordFunc = func() interface{} { return &User_UpdatePassword; }
+var updatePasswordFunc = func() interface{} { return &User_UpdatePassword{}; }
 
-http.HandleFunc("/users/", c.Handler("/users/", parentFunc, HandlerOptions{
+http.Handle("/users/", c.Handler("/users/", parentFunc, HandlerOptions{
 	CreateConstructor: createFunc, // input fields (and JSON payload) for creating
 	ReadConstructor: readFunc,     // output fields (and JSON output) for reading
 	UpdateConstructor: updateFunc, // input fields (and JSON payload) for updating
 	ListConstructor: listFunc,     // fields to appear when listing items (and JSON output)
 }))
-http.HandleFunc("/users/password/", c.Handler("/users/password/", parentFunc, HandlerOptions{
+http.Handle("/users/password/", c.Handler("/users/password/", parentFunc, HandlerOptions{
 	UpdateConstructor: updatePasswordFunc, // input fields for that one updating endpoint
 	Operations: OpUpdate, // only updating will be allowed
 }))
