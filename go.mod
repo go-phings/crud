@@ -7,6 +7,7 @@ require (
 	github.com/go-phings/struct-validator v0.4.7
 	github.com/lib/pq v1.10.9
 	github.com/ory/dockertest/v3 v3.11.0
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 )
 
 require (
